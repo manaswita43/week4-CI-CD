@@ -1,0 +1,43 @@
+name: CI for Dev Branch
+
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Pull DVC Data and Model
+        run: |
+          pip install dvc[gs]
+          dvc pull
+
+      - name: Run Unit Tests
+        run: |
+          pip install pytest
+          pytest tests/ --junitxml=report.xml
+
+      - name: Generate and Comment Report (CML)
+        env:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          pip install cml
+          echo "## ✅ CI Test Report for Dev Branch" > report.md
+          pytest --maxfail=1 --disable-warnings -q >> report.md
+          cml comment create report.md
