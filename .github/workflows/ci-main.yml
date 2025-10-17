@@ -3,7 +3,12 @@ name: CI for Main Branch
 on:
   push:
     branches: [ "main" ]
-
+    
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -50,5 +55,6 @@ jobs:
           echo "" >> report.md
           pytest --maxfail=1 --disable-warnings -q | tee -a report.md
           cml comment create report.md
+
 
 
