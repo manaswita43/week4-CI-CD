@@ -19,6 +19,20 @@ jobs:
       - name: Install Requirements
         run: pip install -r requirements.txt
 
+      - name: Install CML
+        run: npm install -g @dvcorg/cml  
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify auth
+        run: gcloud auth list
+
       - name: Fetch DVC Data and Model
         run: |
           pip install dvc[gs]
@@ -36,3 +50,4 @@ jobs:
           echo "## ✅ CI Test Report for Main Branch" > report.md
           pytest --maxfail=1 --disable-warnings -q >> report.md
           cml comment create report.md
+
