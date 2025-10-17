@@ -3,7 +3,12 @@ name: CI for Main Branch
 on:
   push:
     branches: [ "main" ]
-
+    
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,6 +24,20 @@ jobs:
       - name: Install Requirements
         run: pip install -r requirements.txt
 
+      - name: Install CML
+        run: npm install -g @dvcorg/cml  
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify auth
+        run: gcloud auth list
+
       - name: Fetch DVC Data and Model
         run: |
           pip install dvc[gs]
@@ -28,11 +47,14 @@ jobs:
         run: |
           pytest tests/ --maxfail=1 --disable-warnings -q
 
-      - name: Generate PR Report
+      - name: Generate and Comment Report (CML)
         env:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pip install cml
-          echo "## ✅ CI Test Report for Main Branch" > report.md
-          pytest --maxfail=1 --disable-warnings -q >> report.md
+          echo "## ✅ Model Evaluation Report" > report.md
+          echo "" >> report.md
+          pytest --maxfail=1 --disable-warnings -q | tee -a report.md
           cml comment create report.md
+
+
+

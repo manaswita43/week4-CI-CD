@@ -4,7 +4,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 
-# load data
+# load data from folder
 df = pd.read_csv("data/iris.csv")
 print('Number of rows: ', df.shape[0])
 X = df.iloc[:,:-1]; y = df.iloc[:,-1]
