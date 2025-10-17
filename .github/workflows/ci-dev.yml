@@ -49,11 +49,12 @@ jobs:
 
       - name: Generate and Comment Report (CML)
         env:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          pip install cml
-          echo "## ✅ CI Test Report for Dev Branch" > report.md
-          pytest --maxfail=1 --disable-warnings -q >> report.md
+          echo "## ✅ Model Evaluation Report" > report.md
+          echo "" >> report.md
+          pytest --maxfail=1 --disable-warnings -q | tee -a report.md
           cml comment create report.md
+
 
 
