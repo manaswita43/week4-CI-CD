@@ -23,6 +23,17 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Configure gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify auth
+        run: gcloud auth list    
+
       - name: Pull DVC Data and Model
         run: |
           pip install dvc[gs]
@@ -41,3 +52,4 @@ jobs:
           echo "## ✅ CI Test Report for Dev Branch" > report.md
           pytest --maxfail=1 --disable-warnings -q >> report.md
           cml comment create report.md
+
