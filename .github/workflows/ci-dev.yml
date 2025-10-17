@@ -40,7 +40,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v2
 
       - name: Verify auth
-        run: gcloud auth list
+        run: gcloud auth list    
 
       - name: Pull DVC Data and Model
         run: |
@@ -60,7 +60,3 @@ jobs:
           echo "" >> report.md
           pytest --maxfail=1 --disable-warnings -q | tee -a report.md
           cml comment create report.md
-
-
-
-
