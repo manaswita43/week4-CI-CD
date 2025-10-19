@@ -9,7 +9,7 @@ def test_model_accuracy():
     y = df["species"]
     preds = model.predict(X)
     acc = accuracy_score(y, preds)
-    assert acc > 0.85, f"Model accuracy too low: {acc}"
+    assert acc > 0.85, f"Model accuracy too low: {acc}."
     print(f"Model accuracy: {acc}")
 
 if __name__ == "__main__":
